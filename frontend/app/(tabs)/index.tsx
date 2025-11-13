@@ -1,49 +1,90 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet, ScrollView } from 'react-native';
 import { Link } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Index() {
     return (
         <SafeAreaView style={styles.safeArea}>
-            <View style={styles.container}>
+            <ScrollView contentContainerStyle={styles.scrollContent}>
+                {/* Header com gradiente */}
+                <View style={styles.header}>
+                    <View style={styles.headerContent}>
+                        <Text style={styles.greeting}>Bem-vindo 👋</Text>
+                        <Text style={styles.title}>InfoFatec</Text>
+                        <Text style={styles.subtitle}>Cotia</Text>
+                    </View>
+                </View>
 
-                <Text style={styles.title}>
-                    InfoFatec Cotia
-                </Text>
+                {/* Cards de navegação */}
+                <View style={styles.cardsContainer}>
+                    <Link href="/cultura" asChild>
+                        <Pressable style={styles.card}>
+                            <View style={[styles.iconContainer, styles.iconCultura]}>
+                                <Text style={styles.iconText}>🎭</Text>
+                            </View>
+                            <View style={styles.cardContent}>
+                                <Text style={styles.cardTitle}>Cultura</Text>
+                                <Text style={styles.cardDescription}>
+                                    Eventos culturais e atividades
+                                </Text>
+                            </View>
+                            <Text style={styles.arrow}>→</Text>
+                        </Pressable>
+                    </Link>
 
-                <Link href="/cultura" asChild>
-                    <Pressable style={styles.button}>
-                        <Text style={styles.buttonText}>
-                            Cultura
-                        </Text>
-                    </Pressable>
-                </Link>
+                    <Link href="/educacao" asChild>
+                        <Pressable style={styles.card}>
+                            <View style={[styles.iconContainer, styles.iconEducacao]}>
+                                <Text style={styles.iconText}>📚</Text>
+                            </View>
+                            <View style={styles.cardContent}>
+                                <Text style={styles.cardTitle}>Educação</Text>
+                                <Text style={styles.cardDescription}>
+                                    Cursos e informações acadêmicas
+                                </Text>
+                            </View>
+                            <Text style={styles.arrow}>→</Text>
+                        </Pressable>
+                    </Link>
 
-                <Link href="/educacao" asChild>
-                    <Pressable style={styles.button}>
-                        <Text style={styles.buttonText}>
-                            Educação
-                        </Text>
-                    </Pressable>
-                </Link>
+                    <Link href="/empregos" asChild>
+                        <Pressable style={styles.card}>
+                            <View style={[styles.iconContainer, styles.iconEmpregos]}>
+                                <Text style={styles.iconText}>💼</Text>
+                            </View>
+                            <View style={styles.cardContent}>
+                                <Text style={styles.cardTitle}>Empregos</Text>
+                                <Text style={styles.cardDescription}>
+                                    Oportunidades de carreira
+                                </Text>
+                            </View>
+                            <Text style={styles.arrow}>→</Text>
+                        </Pressable>
+                    </Link>
 
-                <Link href="/empregos" asChild>
-                    <Pressable style={styles.button}>
-                        <Text style={styles.buttonText}>
-                            Empregos
-                        </Text>
-                    </Pressable>
-                </Link>
+                    <Link href="/seguranca" asChild>
+                        <Pressable style={styles.card}>
+                            <View style={[styles.iconContainer, styles.iconSeguranca]}>
+                                <Text style={styles.iconText}>🛡️</Text>
+                            </View>
+                            <View style={styles.cardContent}>
+                                <Text style={styles.cardTitle}>Segurança</Text>
+                                <Text style={styles.cardDescription}>
+                                    Alertas e informações de segurança
+                                </Text>
+                            </View>
+                            <Text style={styles.arrow}>→</Text>
+                        </Pressable>
+                    </Link>
+                </View>
 
-                <Link href="/seguranca" asChild>
-                    <Pressable style={styles.button}>
-                        <Text style={styles.buttonText}>
-                            Segurança
-                        </Text>
-                    </Pressable>
-                </Link>
-
-            </View>
+                {/* Footer informativo */}
+                <View style={styles.footer}>
+                    <Text style={styles.footerText}>
+                        🎓 Portal de informações FATEC Cotia
+                    </Text>
+                </View>
+            </ScrollView>
         </SafeAreaView>
     );
 }
@@ -51,36 +92,112 @@ export default function Index() {
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#f4f4f5',
+        backgroundColor: '#f8fafc',
     },
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 32, 
+    scrollContent: {
+        flexGrow: 1,
+    },
+    header: {
+        backgroundColor: '#1e40af',
+        paddingTop: 20,
+        paddingBottom: 40,
+        paddingHorizontal: 24,
+        borderBottomLeftRadius: 30,
+        borderBottomRightRadius: 30,
+        shadowColor: '#1e40af',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 8,
+    },
+    headerContent: {
+        paddingTop: 10,
+    },
+    greeting: {
+        fontSize: 16,
+        color: '#bfdbfe',
+        marginBottom: 4,
     },
     title: {
-        fontSize: 30, 
+        fontSize: 36,
         fontWeight: 'bold',
-        color: '#27272a', 
-        marginBottom: 40, 
+        color: '#ffffff',
+        marginBottom: 2,
     },
-    button: {
-        width: '100%',
-        backgroundColor: '#ffffff', 
-        padding: 20, 
-        borderRadius: 12, 
-        marginBottom: 20, 
-        elevation: 3,
+    subtitle: {
+        fontSize: 20,
+        color: '#93c5fd',
+        fontWeight: '600',
+    },
+    cardsContainer: {
+        padding: 20,
+        gap: 16,
+        marginTop: -20,
+    },
+    card: {
+        backgroundColor: '#ffffff',
+        borderRadius: 20,
+        padding: 20,
+        flexDirection: 'row',
+        alignItems: 'center',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
+        shadowOpacity: 0.08,
+        shadowRadius: 12,
+        elevation: 4,
+        borderWidth: 1,
+        borderColor: '#f1f5f9',
     },
-    buttonText: {
+    iconContainer: {
+        width: 60,
+        height: 60,
+        borderRadius: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: 16,
+    },
+    iconCultura: {
+        backgroundColor: '#fef3c7',
+    },
+    iconEducacao: {
+        backgroundColor: '#dbeafe',
+    },
+    iconEmpregos: {
+        backgroundColor: '#d1fae5',
+    },
+    iconSeguranca: {
+        backgroundColor: '#ffe4e6',
+    },
+    iconText: {
+        fontSize: 28,
+    },
+    cardContent: {
+        flex: 1,
+    },
+    cardTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#0f172a',
+        marginBottom: 4,
+    },
+    cardDescription: {
+        fontSize: 14,
+        color: '#64748b',
+        lineHeight: 20,
+    },
+    arrow: {
+        fontSize: 24,
+        color: '#cbd5e1',
+        marginLeft: 8,
+    },
+    footer: {
+        padding: 24,
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    footerText: {
+        fontSize: 14,
+        color: '#94a3b8',
         textAlign: 'center',
-        fontSize: 18, 
-        fontWeight: '600', 
-        color: '#1d4ed8', 
     },
 });

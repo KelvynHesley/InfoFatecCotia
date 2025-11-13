@@ -1,4 +1,4 @@
-import { Stack, Link, useFocusEffect, useRouter } from 'expo-router'; // 1. IMPORTAR useRouter
+import { Stack, Link, useFocusEffect, useRouter } from 'expo-router';
 import { View, Text, StyleSheet, FlatList, Pressable, Image, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useState, useCallback } from 'react';
@@ -16,9 +16,8 @@ export default function SegurancaScreen() {
   const [alertas, setAlertas] = useState<Alerta[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [deletandoId, setDeletandoId] = useState<string | null>(null);
-  const router = useRouter(); // 2. INICIALIZAR o router
+  const router = useRouter();
 
-  // Função para buscar os dados da sua API
   const fetchAlertas = async () => {
     try {
       setCarregando(true);
@@ -95,16 +94,38 @@ export default function SegurancaScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <Stack.Screen options={{ title: 'Segurança Cotia' }} />
+      <Stack.Screen options={{ 
+        title: 'Segurança Cotia',
+        headerStyle: { backgroundColor: '#dc2626' },
+        headerTintColor: '#fff',
+        headerTitleStyle: { fontWeight: 'bold' }
+      }} />
+
+      {/* Header com informações */}
+      <View style={styles.headerInfo}>
+        <View style={styles.headerIcon}>
+          <Text style={styles.headerIconText}>🛡️</Text>
+        </View>
+        <View style={styles.headerTextContainer}>
+          <Text style={styles.headerTitle}>Central de Alertas</Text>
+          <Text style={styles.headerSubtitle}>
+            {alertas.length} {alertas.length === 1 ? 'alerta registrado' : 'alertas registrados'}
+          </Text>
+        </View>
+      </View>
 
       <Link href="/cadastrar-alerta" asChild>
         <Pressable style={styles.botaoAdicionar}>
-          <Text style={styles.botaoAdicionarTexto}>+ Registrar Novo Alerta</Text>
+          <Text style={styles.botaoAdicionarIcone}>+</Text>
+          <Text style={styles.botaoAdicionarTexto}>Registrar Novo Alerta</Text>
         </Pressable>
       </Link>
 
       {carregando && (
-        <ActivityIndicator size="large" color="#1d4ed8" style={{ marginTop: 30 }} />
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#dc2626" />
+          <Text style={styles.loadingText}>Carregando alertas...</Text>
+        </View>
       )}
 
       {!carregando && (
@@ -114,16 +135,24 @@ export default function SegurancaScreen() {
           contentContainerStyle={styles.listaContainer}
           renderItem={({ item }) => (
             <View style={styles.cardAlerta}>
+              {/* Badge de status */}
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>🚨 Alerta Ativo</Text>
+              </View>
+
               {item.imageUrl && (
                 <Image source={{ uri: item.imageUrl }} style={styles.cardImagem} />
               )}
-              <Text style={styles.cardTexto}>{item.texto}</Text>
-              <Text style={styles.cardData}>{formatarData(item.data)}</Text>
+              
+              <View style={styles.cardContent}>
+                <Text style={styles.cardTexto}>{item.texto}</Text>
+                
+                <View style={styles.cardFooter}>
+                  <Text style={styles.cardData}>📅 {formatarData(item.data)}</Text>
+                </View>
+              </View>
               
               <View style={styles.botoesContainer}>
-                
-                {/* --- 3. BOTÃO "EDITAR" CORRIGIDO --- */}
-                {/* Removemos o <Link> e usamos <Pressable> com onPress */}
                 <Pressable 
                   style={[styles.botaoAcao, styles.botaoEditar]}
                   onPress={() => router.push({ 
@@ -131,10 +160,10 @@ export default function SegurancaScreen() {
                     params: { id: item._id } 
                   })}
                 >
+                  <Text style={styles.botaoAcaoIcone}>✏️</Text>
                   <Text style={styles.botaoAcaoTexto}>Editar</Text>
                 </Pressable>
 
-                {/* Botão Excluir (continua o mesmo) */}
                 <Pressable
                   style={[styles.botaoAcao, styles.botaoExcluir]}
                   onPress={() => handleExcluir(item._id)}
@@ -143,14 +172,23 @@ export default function SegurancaScreen() {
                   {deletandoId === item._id ? (
                     <ActivityIndicator size="small" color="#fff" />
                   ) : (
-                    <Text style={styles.botaoAcaoTexto}>Excluir</Text>
+                    <>
+                      <Text style={styles.botaoAcaoIcone}>🗑️</Text>
+                      <Text style={styles.botaoAcaoTexto}>Excluir</Text>
+                    </>
                   )}
                 </Pressable>
               </View>
             </View>
           )}
           ListEmptyComponent={
-            <Text style={styles.textoVazio}>Nenhum alerta registrado ainda.</Text>
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyIcon}>📋</Text>
+              <Text style={styles.emptyTitle}>Nenhum alerta registrado</Text>
+              <Text style={styles.emptySubtitle}>
+                Toque no botão acima para criar seu primeiro alerta
+              </Text>
+            </View>
           }
         />
       )}
@@ -158,19 +196,106 @@ export default function SegurancaScreen() {
   );
 }
 
-// Estilos (sem alterações)
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: '#f4f4f5' },
-  listaContainer: { padding: 20, paddingTop: 10 },
-  textoVazio: { textAlign: 'center', marginTop: 30, fontSize: 16, color: '#666' },
-  botaoAdicionar: {
-    backgroundColor: '#1d4ed8',
-    padding: 15,
-    marginHorizontal: 20,
-    marginTop: 10,
-    borderRadius: 12,
+  safeArea: { 
+    flex: 1, 
+    backgroundColor: '#fef2f2' 
+  },
+  headerInfo: {
+    flexDirection: 'row',
     alignItems: 'center',
-    elevation: 3,
+    backgroundColor: '#fff',
+    marginHorizontal: 20,
+    marginTop: 16,
+    padding: 16,
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  headerIcon: {
+    width: 56,
+    height: 56,
+    backgroundColor: '#fee2e2',
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  headerIconText: {
+    fontSize: 28,
+  },
+  headerTextContainer: {
+    flex: 1,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#0f172a',
+    marginBottom: 2,
+  },
+  headerSubtitle: {
+    fontSize: 14,
+    color: '#64748b',
+  },
+  listaContainer: { 
+    padding: 20, 
+    paddingTop: 16 
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 12,
+  },
+  loadingText: {
+    fontSize: 16,
+    color: '#64748b',
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 60,
+    paddingHorizontal: 40,
+  },
+  emptyIcon: {
+    fontSize: 64,
+    marginBottom: 16,
+  },
+  emptyTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#0f172a',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  emptySubtitle: {
+    fontSize: 14,
+    color: '#64748b',
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  botaoAdicionar: {
+    backgroundColor: '#dc2626',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+    marginHorizontal: 20,
+    marginTop: 16,
+    borderRadius: 16,
+    shadowColor: '#dc2626',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  botaoAdicionarIcone: {
+    fontSize: 24,
+    color: '#fff',
+    marginRight: 8,
   },
   botaoAdicionarTexto: {
     color: '#fff',
@@ -179,55 +304,82 @@ const styles = StyleSheet.create({
   },
   cardAlerta: {
     backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 15,
-    marginBottom: 20,
-    marginTop: 10,
-    elevation: 3,
+    borderRadius: 20,
+    marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#fee2e2',
+  },
+  badge: {
+    backgroundColor: '#fee2e2',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#fecaca',
+  },
+  badgeText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#dc2626',
   },
   cardImagem: {
     width: '100%',
-    height: 150,
-    borderRadius: 8,
-    marginBottom: 10,
+    height: 200,
+    backgroundColor: '#f1f5f9',
+  },
+  cardContent: {
+    padding: 16,
   },
   cardTexto: {
     fontSize: 16,
-    color: '#333',
-    lineHeight: 22,
+    color: '#0f172a',
+    lineHeight: 24,
+    marginBottom: 12,
+  },
+  cardFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#f1f5f9',
   },
   cardData: {
-    fontSize: 12,
-    color: '#888',
-    textAlign: 'right',
-    marginTop: 10,
+    fontSize: 13,
+    color: '#64748b',
   },
   botoesContainer: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
-    marginTop: 15,
-    borderTopWidth: 1,
-    borderTopColor: '#eee',
-    paddingTop: 15,
+    justifyContent: 'space-between',
+    padding: 16,
+    gap: 12,
+    backgroundColor: '#fafafa',
   },
   botaoAcao: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    marginLeft: 10,
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    borderRadius: 12,
+    gap: 6,
   },
   botaoEditar: {
-    backgroundColor: '#f97316', // Laranja
+    backgroundColor: '#f97316',
   },
   botaoExcluir: {
-    backgroundColor: '#ef4444', // Vermelho
+    backgroundColor: '#dc2626',
+  },
+  botaoAcaoIcone: {
+    fontSize: 16,
   },
   botaoAcaoTexto: {
     color: '#fff',
     fontWeight: 'bold',
+    fontSize: 14,
   },
 });

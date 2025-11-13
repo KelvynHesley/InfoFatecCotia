@@ -68,111 +68,292 @@ export default function CadastrarAlertaScreen() {
       router.back();
     } catch (error) {
       console.error('Erro ao salvar:', error);
-      // --- CORREÇÃO DO CATCH ---
       let errorMessage = 'Não foi possível salvar o alerta.';
       if (error instanceof Error) {
         errorMessage = error.message;
       }
       Alert.alert('Erro', errorMessage);
-      // --- FIM DA CORREÇÃO ---
     } finally {
       setEnviando(false);
     }
   };
 
   return (
-    // ... (O JSX do return continua o mesmo) ...
     <SafeAreaView style={styles.safeArea}>
-      <Stack.Screen options={{ title: 'Registrar Alerta' }} />
+      <Stack.Screen options={{ 
+        title: 'Registrar Alerta',
+        headerStyle: { backgroundColor: '#dc2626' },
+        headerTintColor: '#fff',
+        headerTitleStyle: { fontWeight: 'bold' }
+      }} />
+      
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.label}>Descreva o Alerta</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Ex: Rua mal iluminada, atividade suspeita..."
-          multiline
-          value={texto}
-          onChangeText={setTexto}
-        />
+        {/* Header informativo */}
+        <View style={styles.headerCard}>
+          <Text style={styles.headerIcon}>📝</Text>
+          <Text style={styles.headerTitle}>Novo Alerta de Segurança</Text>
+          <Text style={styles.headerSubtitle}>
+            Preencha as informações abaixo para registrar um novo alerta
+          </Text>
+        </View>
 
-        <Text style={styles.label}>Adicionar Foto (Opcional)</Text>
-        <Pressable style={styles.botaoImagem} onPress={escolherImagem}>
-          <Text style={styles.botaoImagemTexto}>Escolher da Galeria</Text>
-        </Pressable>
+        {/* Campo de texto */}
+        <View style={styles.formGroup}>
+          <Text style={styles.label}>
+            <Text style={styles.labelIcon}>✍️</Text> Descrição do Alerta
+          </Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Descreva o que está acontecendo..."
+            placeholderTextColor="#94a3b8"
+            multiline
+            value={texto}
+            onChangeText={setTexto}
+            numberOfLines={6}
+          />
+          <Text style={styles.hint}>
+            Seja claro e objetivo na descrição
+          </Text>
+        </View>
 
-        {imagem && (
-          <Image source={{ uri: imagem.uri }} style={styles.imagemPreview} />
-        )}
+        {/* Seção de imagem */}
+        <View style={styles.formGroup}>
+          <Text style={styles.label}>
+            <Text style={styles.labelIcon}>📷</Text> Adicionar Foto (Opcional)
+          </Text>
+          
+          <Pressable 
+            style={styles.botaoImagem} 
+            onPress={escolherImagem}
+          >
+            <Text style={styles.botaoImagemIcone}>🖼️</Text>
+            <View style={styles.botaoImagemContent}>
+              <Text style={styles.botaoImagemTexto}>Escolher da Galeria</Text>
+              <Text style={styles.botaoImagemSubtexto}>
+                JPG, PNG até 5MB
+              </Text>
+            </View>
+          </Pressable>
 
-        <View style={{ height: 40 }} /> 
-
-        <Pressable
-          style={[styles.botaoSalvar, enviando && styles.botaoDesabilitado]}
-          onPress={handleSalvar}
-          disabled={enviando}
-        >
-          {enviando ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={styles.botaoSalvarTexto}>Salvar Alerta</Text>
+          {imagem && (
+            <View style={styles.imagemContainer}>
+              <Image source={{ uri: imagem.uri }} style={styles.imagemPreview} />
+              <Pressable 
+                style={styles.botaoRemoverImagem}
+                onPress={() => setImagem(null)}
+              >
+                <Text style={styles.botaoRemoverTexto}>✕ Remover</Text>
+              </Pressable>
+            </View>
           )}
-        </Pressable>
+        </View>
+
+        {/* Botões de ação */}
+        <View style={styles.botoesContainer}>
+          <Pressable
+            style={[styles.botaoSecundario]}
+            onPress={() => router.back()}
+            disabled={enviando}
+          >
+            <Text style={styles.botaoSecundarioTexto}>Cancelar</Text>
+          </Pressable>
+
+          <Pressable
+            style={[styles.botaoSalvar, enviando && styles.botaoDesabilitado]}
+            onPress={handleSalvar}
+            disabled={enviando}
+          >
+            {enviando ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <>
+                <Text style={styles.botaoSalvarIcone}>💾</Text>
+                <Text style={styles.botaoSalvarTexto}>Salvar Alerta</Text>
+              </>
+            )}
+          </Pressable>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-// ... (Styles continuam os mesmos) ...
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: '#fff' },
-  container: { padding: 20 },
+  safeArea: { 
+    flex: 1, 
+    backgroundColor: '#fef2f2' 
+  },
+  container: { 
+    padding: 20,
+    paddingBottom: 40,
+  },
+  headerCard: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 20,
+    alignItems: 'center',
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  headerIcon: {
+    fontSize: 48,
+    marginBottom: 12,
+  },
+  headerTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#0f172a',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  headerSubtitle: {
+    fontSize: 14,
+    color: '#64748b',
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  formGroup: {
+    marginBottom: 24,
+  },
   label: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 10,
+    fontWeight: '700',
+    color: '#0f172a',
+    marginBottom: 12,
+  },
+  labelIcon: {
+    fontSize: 18,
   },
   input: {
-    backgroundColor: '#f4f4f5',
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    paddingVertical: 12,
+    backgroundColor: '#fff',
+    borderWidth: 2,
+    borderColor: '#e2e8f0',
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
     fontSize: 16,
+    color: '#0f172a',
     textAlignVertical: 'top',
-    marginBottom: 20,
-    minHeight: 120,
+    minHeight: 140,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 1,
+  },
+  hint: {
+    fontSize: 13,
+    color: '#94a3b8',
+    marginTop: 8,
+    marginLeft: 4,
   },
   botaoImagem: {
-    backgroundColor: '#eef2ff', 
-    padding: 15,
-    borderRadius: 8,
+    backgroundColor: '#fff',
+    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    padding: 20,
+    borderRadius: 16,
+    borderWidth: 2,
+    borderColor: '#e2e8f0',
+    borderStyle: 'dashed',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 1,
+  },
+  botaoImagemIcone: {
+    fontSize: 32,
+    marginRight: 16,
+  },
+  botaoImagemContent: {
+    flex: 1,
   },
   botaoImagemTexto: {
-    color: '#1d4ed8', 
+    color: '#1e40af',
     fontWeight: 'bold',
+    fontSize: 16,
+    marginBottom: 2,
+  },
+  botaoImagemSubtexto: {
+    color: '#94a3b8',
+    fontSize: 12,
+  },
+  imagemContainer: {
+    marginTop: 16,
+    borderRadius: 16,
+    overflow: 'hidden',
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
   },
   imagemPreview: {
     width: '100%',
-    height: 200,
-    borderRadius: 8,
-    marginBottom: 20,
-    backgroundColor: '#f4f4f5',
+    height: 220,
+    backgroundColor: '#f1f5f9',
   },
-  botaoSalvar: {
-    backgroundColor: '#16a34a', // Verde
-    padding: 18,
-    borderRadius: 12,
+  botaoRemoverImagem: {
+    backgroundColor: '#fee2e2',
+    padding: 12,
     alignItems: 'center',
   },
+  botaoRemoverTexto: {
+    color: '#dc2626',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  botoesContainer: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 8,
+  },
+  botaoSecundario: {
+    flex: 1,
+    backgroundColor: '#fff',
+    padding: 18,
+    borderRadius: 16,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#e2e8f0',
+  },
+  botaoSecundarioTexto: {
+    color: '#64748b',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  botaoSalvar: {
+    flex: 1,
+    backgroundColor: '#16a34a',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 18,
+    borderRadius: 16,
+    gap: 8,
+    shadowColor: '#16a34a',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+  },
   botaoDesabilitado: {
-    backgroundColor: '#9ca3af',
+    backgroundColor: '#94a3b8',
+    shadowOpacity: 0,
+    elevation: 0,
+  },
+  botaoSalvarIcone: {
+    fontSize: 20,
   },
   botaoSalvarTexto: {
     color: '#fff',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
   },
 });

@@ -17,6 +17,10 @@ export default function StackLayout() {
         name="editar-alerta" 
         options={{ title: 'Editar Alerta' }} 
       />
+      <Stack.Screen 
+        name="educacao" 
+        options={{ title: 'Educação - Cursos' }} 
+      />
       
     </Stack>
   );
